@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "438080546241",
+    "project_id": "timecalculator-f3c48",
+    "storage_bucket": "timecalculator-f3c48.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438080546241:android:fc2a059aee832addc7bb40",
+        "android_client_info": {
+          "package_name": "com.HB.time_calculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438080546241-8qqs0brkom26sp75f1kk2dbahbk56ina.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfcvzJQ0BbCjMu4gGpMz6LemWu_UXiuPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "438080546241-8qqs0brkom26sp75f1kk2dbahbk56ina.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
