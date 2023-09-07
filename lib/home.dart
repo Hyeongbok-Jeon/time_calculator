@@ -9,10 +9,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<int> hm = [0, 0, 0, 0];
   String symbol = '';
+  List<int> hmBefore = [0, 0, 0, 0];
+  List<int> hmAfter = [0, 0, 0, 0];
 
-  Widget btnNumber(int number) {
+  Expanded btnNumber(int number) {
     return Expanded(
       flex: 1,
       child: Padding(
@@ -21,9 +22,8 @@ class _HomeState extends State<Home> {
           label: Text(number.toString()),
           onPressed: () {
             setState(() {
-              hm.removeAt(0);
-              hm.add(number);
-              print(hm);
+              hmAfter.removeAt(0);
+              hmAfter.add(number);
             });
           },
         ),
@@ -31,28 +31,66 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget btnDelete() {
-    return FloatingActionButton.extended(
-      label: const Icon(CupertinoIcons.trash),
-      onPressed: () {
-        setState(() {
-          hm = [0, 0, 0, 0];
-        });
-      },
+  Expanded btnReset() {
+    return Expanded(
+      flex: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: FloatingActionButton.extended(
+          label: const Icon(CupertinoIcons.trash),
+          onPressed: () {
+            setState(() {
+              symbol = '';
+              hmBefore = [0, 0, 0, 0];
+              hmAfter = [0, 0, 0, 0];
+            });
+          },
+        ),
+      ),
     );
   }
 
-  Widget btnAdd() {
+  Expanded btnFourBasicOperator(String operator) {
     return Expanded(
       flex: 1,
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: FloatingActionButton.extended(
-          label: const Icon(CupertinoIcons.add),
+          label: Icon(operatorToIconData(operator)),
           onPressed: () {
             setState(() {
-              symbol = '+';
-              hm = [0, 0, 0, 0];
+              if (symbol == '') {
+                hmBefore = hmAfter;
+              } else {
+                int hmBeforeMinute = hmListToMinute(hmBefore);
+                int hmAfterMinute = hmListToMinute(hmAfter);
+                if (hmAfterMinute > 0) {
+                  switch (symbol) {
+                    case '+':
+                      int calResult = hmBeforeMinute + hmAfterMinute;
+                      hmBefore = minuteToHmList(calResult);
+                      break;
+                    case '-':
+                      if (hmBeforeMinute >= hmAfterMinute) {
+                        int calResult = hmBeforeMinute - hmAfterMinute;
+                        hmBefore = minuteToHmList(calResult);
+                      } else {
+                        hmBefore = hmBefore.map((e) => 0).toList();
+                      }
+                      break;
+                    case 'x':
+                      int calResult = hmBeforeMinute * hmAfterMinute;
+                      hmBefore = minuteToHmList(calResult);
+                      break;
+                    case '%':
+                      int calResult = hmBeforeMinute ~/ hmAfterMinute;
+                      hmBefore = minuteToHmList(calResult);
+                      break;
+                  }
+                }
+              }
+              symbol = operator;
+              hmAfter = hmAfter.map((e) => 0).toList();
             });
           },
         ),
@@ -60,44 +98,76 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget btnSymbol(String symbol, {int flex = 1}) {
-    IconData iconData = CupertinoIcons.airplane;
-    switch (symbol) {
-      case '+':
-        iconData = CupertinoIcons.add;
-        break;
-      case '-':
-        iconData = CupertinoIcons.minus;
-        break;
-      case 'x':
-        iconData = CupertinoIcons.multiply;
-        break;
-      case '%':
-        iconData = CupertinoIcons.divide;
-        break;
-      case 'C':
-        iconData = CupertinoIcons.trash;
-        break;
-      case '<':
-        iconData = CupertinoIcons.left_chevron;
-        break;
-      case '=':
-        iconData = CupertinoIcons.equal;
-        break;
-    }
-
+  Expanded btnEqual() {
     return Expanded(
-      flex: flex,
+      flex: 1,
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: FloatingActionButton.extended(
-          label: Icon(iconData),
+          label: const Icon(CupertinoIcons.equal),
           onPressed: () {
-            setState(() {});
+            setState(() {
+              int calResult;
+              int hmBeforeMinute = hmListToMinute(hmBefore);
+              int hmAfterMinute = hmListToMinute(hmAfter);
+              switch (symbol) {
+                case '+':
+                  calResult = hmBeforeMinute + hmAfterMinute;
+                  hmAfter = minuteToHmList(calResult);
+                  break;
+                case '-':
+                  if (hmBeforeMinute >= hmAfterMinute) {
+                    calResult = hmBeforeMinute - hmAfterMinute;
+                    hmAfter = minuteToHmList(calResult);
+                  } else {
+                    hmAfter = hmAfter.map((e) => 0).toList();
+                  }
+                  break;
+                case 'x':
+                  calResult = hmBeforeMinute * hmAfterMinute;
+                  hmAfter = minuteToHmList(calResult);
+                  break;
+                case '%':
+                  if (hmAfterMinute == 0) {
+                    hmAfter = hmAfter.map((e) => 0).toList();
+                  } else {
+                    int calResult = hmBeforeMinute ~/ hmAfterMinute;
+                    hmAfter = minuteToHmList(calResult);
+                  }
+                  break;
+              }
+              hmBefore = hmBefore.map((e) => 0).toList();
+              symbol = '';
+            });
           },
         ),
       ),
     );
+  }
+
+  int hmListToMinute(List<int> hm) {
+    return hm[0] * 600 + hm[1] * 60 + hm[2] * 10 + hm[3];
+  }
+
+  List<int> minuteToHmList(int minute) {
+    return [(minute ~/ 60) ~/ 10, (minute ~/ 60) % 10, (minute % 60) ~/ 10, (minute % 60) % 10];
+  }
+
+  String hmListToExpression(List<int> hm) {
+    return '${hm[0].toString()}${hm[1].toString()}시간 ${hm[2].toString()}${hm[3].toString()}분';
+  }
+
+  IconData? operatorToIconData(String operator) {
+    switch (operator) {
+      case '+':
+        return CupertinoIcons.add;
+      case '-':
+        return CupertinoIcons.minus;
+      case 'x':
+        return CupertinoIcons.multiply;
+      case '%':
+        return CupertinoIcons.divide;
+    }
   }
 
   @override
@@ -124,23 +194,25 @@ class _HomeState extends State<Home> {
                     children: [
                       Expanded(
                           flex: 3,
-                          child: Container(
-                              child: const Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Text('', style: TextStyle(color: Colors.grey, fontSize: 50))))),
+                          child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: symbol == ''
+                                  ? const SizedBox()
+                                  : Text(
+                                      // '${hmBefore[0].toString()}${hmBefore[1].toString()}시간 ${hmBefore[2].toString()}${hmBefore[3].toString()}분',
+                                      hmListToExpression(hmBefore),
+                                      style: const TextStyle(color: Colors.grey, fontSize: 50)))),
                       Expanded(
                         flex: 2,
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(symbol),
-                              Text(
-                                '${hm[0].toString()}${hm[1].toString()}시간 ${hm[2].toString()}${hm[3].toString()}분',
-                                style: const TextStyle(fontSize: 50),
-                              ),
-                            ],
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(operatorToIconData(symbol), size: 50,),
+                            Text(
+                              hmListToExpression(hmAfter),
+                              style: const TextStyle(fontSize: 50),
+                            ),
+                          ],
                         ),
                       )
                     ],
@@ -150,9 +222,9 @@ class _HomeState extends State<Home> {
               flex: 1,
               child: Row(
                 children: [
-                  Expanded(flex: 2, child: Padding(padding: const EdgeInsets.all(5.0), child: btnDelete())),
-                  btnSymbol('<'),
-                  btnSymbol('%'),
+                  btnReset(),
+                  // btnSymbol('<'),
+                  btnFourBasicOperator('%'),
                 ],
               ),
             ),
@@ -163,7 +235,7 @@ class _HomeState extends State<Home> {
                   btnNumber(7),
                   btnNumber(8),
                   btnNumber(9),
-                  btnSymbol('x'),
+                  btnFourBasicOperator('x'),
                 ],
               ),
             ),
@@ -174,7 +246,7 @@ class _HomeState extends State<Home> {
                   btnNumber(4),
                   btnNumber(5),
                   btnNumber(6),
-                  btnSymbol('-'),
+                  btnFourBasicOperator('-'),
                 ],
               ),
             ),
@@ -185,7 +257,7 @@ class _HomeState extends State<Home> {
                   btnNumber(1),
                   btnNumber(2),
                   btnNumber(3),
-                  btnAdd(),
+                  btnFourBasicOperator('+'),
                 ],
               ),
             ),
@@ -194,7 +266,7 @@ class _HomeState extends State<Home> {
               child: Row(
                 children: [
                   btnNumber(0),
-                  btnSymbol('='),
+                  btnEqual(),
                 ],
               ),
             ),
