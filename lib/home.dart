@@ -10,8 +10,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String symbol = '';
-  List<int> hmBefore = [0, 0, 0, 0];
-  List<int> hmAfter = [0, 0, 0, 0];
+  List<int> hmBefore = List<int>.generate(6, (index) => 0);
+  List<int> hmAfter = List<int>.generate(6, (index) => 0);
 
   Expanded btnNumber(int number) {
     return Expanded(
@@ -41,8 +41,26 @@ class _HomeState extends State<Home> {
           onPressed: () {
             setState(() {
               symbol = '';
-              hmBefore = [0, 0, 0, 0];
-              hmAfter = [0, 0, 0, 0];
+              hmBefore = hmBefore.map((e) => 0).toList();
+              hmAfter = hmBefore.map((e) => 0).toList();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Expanded btnBack() {
+    return Expanded(
+      flex: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: FloatingActionButton.extended(
+          label: const Icon(CupertinoIcons.left_chevron),
+          onPressed: () {
+            setState(() {
+              hmAfter.insert(0, 0);
+              hmAfter.removeLast();
             });
           },
         ),
@@ -59,11 +77,14 @@ class _HomeState extends State<Home> {
           label: Icon(operatorToIconData(operator)),
           onPressed: () {
             setState(() {
+              int hmBeforeMinute = hmListToMinute(hmBefore);
+              int hmAfterMinute = hmListToMinute(hmAfter);
+              if (hmBeforeMinute == 0 && hmAfterMinute == 0) {
+                return;
+              }
               if (symbol == '') {
                 hmBefore = hmAfter;
               } else {
-                int hmBeforeMinute = hmListToMinute(hmBefore);
-                int hmAfterMinute = hmListToMinute(hmAfter);
                 if (hmAfterMinute > 0) {
                   switch (symbol) {
                     case '+':
@@ -168,20 +189,26 @@ class _HomeState extends State<Home> {
       case '%':
         return CupertinoIcons.divide;
     }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Time Calculator'),
-      ),
+          title: const Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('시간 계산기'),
+          IconButton(onPressed: null, icon: Icon(Icons.settings))
+        ],
+      )),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         child: Column(
           children: [
             Expanded(
-                flex: 2,
+                flex: 3,
                 child: Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -201,16 +228,19 @@ class _HomeState extends State<Home> {
                                   : Text(
                                       // '${hmBefore[0].toString()}${hmBefore[1].toString()}시간 ${hmBefore[2].toString()}${hmBefore[3].toString()}분',
                                       hmListToExpression(hmBefore),
-                                      style: const TextStyle(color: Colors.grey, fontSize: 50)))),
+                                      style: const TextStyle(color: Colors.grey, fontSize: 40)))),
                       Expanded(
                         flex: 2,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Icon(operatorToIconData(symbol), size: 50,),
+                            Icon(
+                              operatorToIconData(symbol),
+                              size: 40,
+                            ),
                             Text(
                               hmListToExpression(hmAfter),
-                              style: const TextStyle(fontSize: 50),
+                              style: const TextStyle(fontSize: 40),
                             ),
                           ],
                         ),
@@ -223,7 +253,7 @@ class _HomeState extends State<Home> {
               child: Row(
                 children: [
                   btnReset(),
-                  // btnSymbol('<'),
+                  btnBack(),
                   btnFourBasicOperator('%'),
                 ],
               ),
