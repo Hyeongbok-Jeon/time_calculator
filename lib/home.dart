@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:time_calculator/settings.dart';
+
+import 'SingleChoice.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -10,8 +13,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String symbol = '';
-  List<int> hmBefore = List<int>.generate(6, (index) => 0);
-  List<int> hmAfter = List<int>.generate(6, (index) => 0);
+  List<int> hmBefore = List<int>.generate(4, (index) => 0);
+  List<int> hmAfter = List<int>.generate(4, (index) => 0);
+  TimeUnit timeUnit = TimeUnit.HM;
+
+  void onTimeUnitChanged(TimeUnit timeUnit) {
+    setState(() {
+      this.timeUnit = timeUnit;
+    });
+  }
 
   Expanded btnNumber(int number) {
     return Expanded(
@@ -175,8 +185,10 @@ class _HomeState extends State<Home> {
   }
 
   String hmListToExpression(List<int> hm) {
-    return '${hm[0].toString()}${hm[1].toString()}시간 ${hm[2].toString()}${hm[3].toString()}분';
+    return '${hm[0].toString()}${hm[1].toString()}:${hm[2].toString()}${hm[3].toString()}';
   }
+
+
 
   IconData? operatorToIconData(String operator) {
     switch (operator) {
@@ -196,11 +208,18 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Row(
+          title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('시간 계산기'),
-          IconButton(onPressed: null, icon: Icon(Icons.settings))
+          const Text('시간 계산기'),
+          // IconButton(
+          //     onPressed: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(builder: (context) => Settings()),
+          //       );
+          //     },
+          //     icon: Icon(Icons.settings))
         ],
       )),
       body: Padding(
@@ -226,9 +245,8 @@ class _HomeState extends State<Home> {
                               child: symbol == ''
                                   ? const SizedBox()
                                   : Text(
-                                      // '${hmBefore[0].toString()}${hmBefore[1].toString()}시간 ${hmBefore[2].toString()}${hmBefore[3].toString()}분',
                                       hmListToExpression(hmBefore),
-                                      style: const TextStyle(color: Colors.grey, fontSize: 40)))),
+                                      style: const TextStyle(color: Colors.grey, fontSize: 50)))),
                       Expanded(
                         flex: 2,
                         child: Row(
@@ -236,11 +254,11 @@ class _HomeState extends State<Home> {
                           children: [
                             Icon(
                               operatorToIconData(symbol),
-                              size: 40,
+                              size: 50,
                             ),
                             Text(
                               hmListToExpression(hmAfter),
-                              style: const TextStyle(fontSize: 40),
+                              style: const TextStyle(fontSize: 50),
                             ),
                           ],
                         ),
