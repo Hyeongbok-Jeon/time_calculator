@@ -26,152 +26,148 @@ class _HomeState extends State<Home> {
   Expanded btnNumber(int number) {
     return Expanded(
       flex: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: FloatingActionButton.extended(
-          label: Text(number.toString()),
-          onPressed: () {
+      child: InkWell(
+          onTap: () {
             setState(() {
               hmAfter.removeAt(0);
               hmAfter.add(number);
             });
           },
-        ),
-      ),
+          child: Image.asset(
+            'assets/number_$number.png',
+          )),
     );
   }
 
-  Expanded btnReset() {
+  Expanded btnClear() {
     return Expanded(
-      flex: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: FloatingActionButton.extended(
-          label: const Icon(CupertinoIcons.trash),
-          onPressed: () {
+      flex: 1,
+      child: InkWell(
+          onTap: () {
             setState(() {
               symbol = '';
               hmBefore = hmBefore.map((e) => 0).toList();
               hmAfter = hmBefore.map((e) => 0).toList();
             });
           },
-        ),
-      ),
+          child: Image.asset(
+            'assets/c.png',
+          )),
     );
   }
 
-  Expanded btnBack() {
+  Expanded btnClearEntry() {
     return Expanded(
       flex: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: FloatingActionButton.extended(
-          label: const Icon(CupertinoIcons.left_chevron),
-          onPressed: () {
+      child: InkWell(
+          onTap: () {
             setState(() {
               hmAfter.insert(0, 0);
               hmAfter.removeLast();
             });
           },
-        ),
-      ),
+          child: Image.asset(
+            'assets/ce.png',
+          )),
     );
   }
 
   Expanded btnFourBasicOperator(String operator) {
     return Expanded(
       flex: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: FloatingActionButton.extended(
-          label: Icon(operatorToIconData(operator)),
-          onPressed: () {
-            setState(() {
-              int hmBeforeMinute = hmListToMinute(hmBefore);
-              int hmAfterMinute = hmListToMinute(hmAfter);
-              if (hmBeforeMinute == 0 && hmAfterMinute == 0) {
-                return;
-              }
-              if (symbol == '') {
-                hmBefore = hmAfter;
-              } else {
-                if (hmAfterMinute > 0) {
-                  switch (symbol) {
-                    case '+':
-                      int calResult = hmBeforeMinute + hmAfterMinute;
-                      hmBefore = minuteToHmList(calResult);
-                      break;
-                    case '-':
-                      if (hmBeforeMinute >= hmAfterMinute) {
-                        int calResult = hmBeforeMinute - hmAfterMinute;
+      child: Container(
+        height: double.infinity,
+        child: InkWell(
+            onTap: () {
+              setState(() {
+                int hmBeforeMinute = hmListToMinute(hmBefore);
+                int hmAfterMinute = hmListToMinute(hmAfter);
+                if (hmBeforeMinute == 0 && hmAfterMinute == 0) {
+                  return;
+                }
+                if (symbol == '') {
+                  hmBefore = hmAfter;
+                } else {
+                  if (hmAfterMinute > 0) {
+                    switch (symbol) {
+                      case '+':
+                        int calResult = hmBeforeMinute + hmAfterMinute;
                         hmBefore = minuteToHmList(calResult);
-                      } else {
-                        hmBefore = hmBefore.map((e) => 0).toList();
-                      }
-                      break;
-                    case 'x':
-                      int calResult = hmBeforeMinute * hmAfterMinute;
-                      hmBefore = minuteToHmList(calResult);
-                      break;
-                    case '%':
-                      int calResult = hmBeforeMinute ~/ hmAfterMinute;
-                      hmBefore = minuteToHmList(calResult);
-                      break;
+                        break;
+                      case '-':
+                        if (hmBeforeMinute >= hmAfterMinute) {
+                          int calResult = hmBeforeMinute - hmAfterMinute;
+                          hmBefore = minuteToHmList(calResult);
+                        } else {
+                          hmBefore = hmBefore.map((e) => 0).toList();
+                        }
+                        break;
+                      case 'x':
+                        int calResult = hmBeforeMinute * hmAfterMinute;
+                        hmBefore = minuteToHmList(calResult);
+                        break;
+                      case '%':
+                        int calResult = hmBeforeMinute ~/ hmAfterMinute;
+                        hmBefore = minuteToHmList(calResult);
+                        break;
+                    }
                   }
                 }
-              }
-              symbol = operator;
-              hmAfter = hmAfter.map((e) => 0).toList();
-            });
-          },
-        ),
+                symbol = operator;
+                hmAfter = hmAfter.map((e) => 0).toList();
+              });
+            },
+            child: Image.asset(
+              'assets/func_$operator.png',
+            )),
       ),
     );
   }
 
-  Expanded btnEqual() {
+  Expanded btnEqulity() {
     return Expanded(
       flex: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: FloatingActionButton.extended(
-          label: const Icon(CupertinoIcons.equal),
-          onPressed: () {
-            setState(() {
-              int calResult;
-              int hmBeforeMinute = hmListToMinute(hmBefore);
-              int hmAfterMinute = hmListToMinute(hmAfter);
-              switch (symbol) {
-                case '+':
-                  calResult = hmBeforeMinute + hmAfterMinute;
-                  hmAfter = minuteToHmList(calResult);
-                  break;
-                case '-':
-                  if (hmBeforeMinute >= hmAfterMinute) {
-                    calResult = hmBeforeMinute - hmAfterMinute;
+      child: Container(
+        height: double.infinity,
+        child: InkWell(
+            onTap: () {
+              setState(() {
+                int calResult;
+                int hmBeforeMinute = hmListToMinute(hmBefore);
+                int hmAfterMinute = hmListToMinute(hmAfter);
+                switch (symbol) {
+                  case '+':
+                    calResult = hmBeforeMinute + hmAfterMinute;
                     hmAfter = minuteToHmList(calResult);
-                  } else {
-                    hmAfter = hmAfter.map((e) => 0).toList();
-                  }
-                  break;
-                case 'x':
-                  calResult = hmBeforeMinute * hmAfterMinute;
-                  hmAfter = minuteToHmList(calResult);
-                  break;
-                case '%':
-                  if (hmAfterMinute == 0) {
-                    hmAfter = hmAfter.map((e) => 0).toList();
-                  } else {
-                    int calResult = hmBeforeMinute ~/ hmAfterMinute;
+                    break;
+                  case '-':
+                    if (hmBeforeMinute >= hmAfterMinute) {
+                      calResult = hmBeforeMinute - hmAfterMinute;
+                      hmAfter = minuteToHmList(calResult);
+                    } else {
+                      hmAfter = hmAfter.map((e) => 0).toList();
+                    }
+                    break;
+                  case 'x':
+                    calResult = hmBeforeMinute * hmAfterMinute;
                     hmAfter = minuteToHmList(calResult);
-                  }
-                  break;
-              }
-              hmBefore = hmBefore.map((e) => 0).toList();
-              symbol = '';
-            });
-          },
-        ),
+                    break;
+                  case '%':
+                    if (hmAfterMinute == 0) {
+                      hmAfter = hmAfter.map((e) => 0).toList();
+                    } else {
+                      int calResult = hmBeforeMinute ~/ hmAfterMinute;
+                      hmAfter = minuteToHmList(calResult);
+                    }
+                    break;
+                }
+                hmBefore = hmBefore.map((e) => 0).toList();
+                symbol = '';
+              });
+            },
+            child: Image.asset(
+              'assets/equality.png',
+            )),
       ),
     );
   }
@@ -187,8 +183,6 @@ class _HomeState extends State<Home> {
   String hmListToExpression(List<int> hm) {
     return '${hm[0].toString()}${hm[1].toString()}:${hm[2].toString()}${hm[3].toString()}';
   }
-
-
 
   IconData? operatorToIconData(String operator) {
     switch (operator) {
@@ -208,10 +202,10 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Row(
+          title: const Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('시간 계산기'),
+          Text('시간 계산기'),
           // IconButton(
           //     onPressed: () {
           //       Navigator.push(
@@ -222,8 +216,14 @@ class _HomeState extends State<Home> {
           //     icon: Icon(Icons.settings))
         ],
       )),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+      body: Container(
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/background.png'), // 사용할 배경 이미지 경로
+            fit: BoxFit.cover, // 이미지가 화면에 맞게 채워지도록 설정
+          )
+        ),
         child: Column(
           children: [
             Expanded(
@@ -234,7 +234,6 @@ class _HomeState extends State<Home> {
                     side: BorderSide(
                       color: Theme.of(context).colorScheme.outlineVariant,
                     ),
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
                   ),
                   child: Column(
                     children: [
@@ -244,8 +243,7 @@ class _HomeState extends State<Home> {
                               alignment: Alignment.bottomRight,
                               child: symbol == ''
                                   ? const SizedBox()
-                                  : Text(
-                                      hmListToExpression(hmBefore),
+                                  : Text(hmListToExpression(hmBefore),
                                       style: const TextStyle(color: Colors.grey, fontSize: 50)))),
                       Expanded(
                         flex: 2,
@@ -266,58 +264,86 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 )),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  btnReset(),
-                  btnBack(),
-                  btnFourBasicOperator('%'),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  btnNumber(7),
-                  btnNumber(8),
-                  btnNumber(9),
-                  btnFourBasicOperator('x'),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  btnNumber(4),
-                  btnNumber(5),
-                  btnNumber(6),
-                  btnFourBasicOperator('-'),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  btnNumber(1),
-                  btnNumber(2),
-                  btnNumber(3),
-                  btnFourBasicOperator('+'),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  btnNumber(0),
-                  btnEqual(),
-                ],
-              ),
-            ),
+            Stack(
+              children: [
+                Container(
+                  height: 500,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/recess.png'), // 사용할 배경 이미지 경로
+                        fit: BoxFit.cover, // 이미지가 화면에 맞게 채워지도록 설정
+                      )
+                  ),
+                ),
+                Container(
+                  height: 484,
+                  padding: const EdgeInsets.fromLTRB(10, 12, 10, 0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        // height: 92,
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              flex: 2,
+                              child: SizedBox(),
+                            ),
+                            btnClearEntry(),
+                            btnClear(),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        // height: 92,
+                        child: Row(
+                          children: [
+                            btnNumber(7),
+                            btnNumber(8),
+                            btnNumber(9),
+                            btnFourBasicOperator('%'),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        // height: 92,
+                        child: Row(
+                          children: [
+                            btnNumber(4),
+                            btnNumber(5),
+                            btnNumber(6),
+                            btnFourBasicOperator('x'),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        // height: 92,
+                        child: Row(
+                          children: [
+                            btnNumber(1),
+                            btnNumber(2),
+                            btnNumber(3),
+                            btnFourBasicOperator('-'),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        // height: 92,
+                        child: Row(
+                          children: [
+                            btnNumber(0),
+                            const Expanded(flex: 1, child: SizedBox()),
+                            btnEqulity(),
+                            btnFourBasicOperator('+'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )
+
+
           ],
         ),
       ),
